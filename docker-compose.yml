@@ -25,9 +25,40 @@ services:
       - 16379:8081
     volumes:
       - redis-commander-volume
-      
+
+  postgres:
+    container_name: postgres
+    image: postgres:11.12
+    restart: "no"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-volume
+ 
+  postgres-pgadmin4:
+    container_name: postgres-pgadmin4
+    image:  dpage/pgadmin4:5.4
+    restart: "no"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@user.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    depends_on:
+      - postgres
+    ports:
+      - 15432:80
+    volumes:
+      - postgres-pgadmin4-volume
+
+
 volumes:
   redis-volume:
     driver: local
   redis-commander-volume:
+    driver: local
+  postgres-volume:
+    driver: local
+  postgres-pgadmin4-volume:
     driver: local
