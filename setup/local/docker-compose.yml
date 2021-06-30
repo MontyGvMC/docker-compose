@@ -85,34 +85,14 @@ services:
     volumes:
       - rabbitmq-volume
 
-#  elasticsearch:
-#    container_name: elasticsearch
-#    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
-#    restart: "no"
-#    environment:
-#      - ELASTIC_USERNAME:user
-#      - ELASTIC_PASSWORD:password
-#      - xpack.security.enabled=false
-#      - discovery.type=single-node
-#    ports:
-#      - 9200:9200
-#      - 9300:9300
-#    volumes:
-#      - elasticsearch-volume
-#
-#  kibana:
-#    container_name: kibana
-#    image: docker.elastic.co/kibana/kibana:7.13.1
-#    restart: "no"
-#    depends_on:
-#      - elasticsearch
-#    environment:
-#      - ELASTICSEARCH_URL:http://elasticsearch:9200
-#      - ELASTICSEARCH_HOSTS:http://elasticsearch:9200
-#    ports:
-#      - 5601:5601
-#    volumes:
-#      - kibana-volume
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.28.0
+    restart: "no"
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus-volume
 
 volumes:
   redis-volume:
@@ -127,7 +107,5 @@ volumes:
     driver: local
   rabbitmq-volume:
     driver: local
-#  elasticsearch-volume:
-#    driver: local
-#  kibana-volume:
-#    driver: local
+  prometheus-volume:
+    driver: local
