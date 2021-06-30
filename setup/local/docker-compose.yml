@@ -93,6 +93,18 @@ services:
       - 9090:9090
     volumes:
       - prometheus-volume
+      
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:8.0.3
+    restart: "no"
+    environment:
+      - GF_SECURITY_ADMIN_USER=user
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-volume
 
 volumes:
   redis-volume:
@@ -108,4 +120,6 @@ volumes:
   rabbitmq-volume:
     driver: local
   prometheus-volume:
+    driver: local
+  grafana-volume:
     driver: local
