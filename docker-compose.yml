@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+
+  redis:
+    container_name: redis
+    image: redis:6.2.4-alpine3.13
+    restart: "no"
+    command: redis-server --requirepass password
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-volume
+
+  redis-commander:
+    container_name: redis-commander
+    image: rediscommander/redis-commander:redis-commander-210
+    restart: "no"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOSTS=local:redis:6379:0:password,local:redis:6379:1:password,local:redis:6379:2:password,local:redis:6379:3:password,local:redis:6379:4:password,local:redis:6379:5:password,local:redis:6379:6:password,local:redis:6379:7:password
+      - HTTP_USER=user
+      - HTTP_PASSWORD=password
+    ports:
+      - 16379:8081
+    volumes:
+      - redis-commander-volume
+      
+volumes:
+  redis-volume:
+    driver: local
+  redis-commander-volume:
+    driver: local
