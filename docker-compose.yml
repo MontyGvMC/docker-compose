@@ -65,6 +65,26 @@ services:
       - 9000:9000
     volumes:
       - minio-volume
+      
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.8.17-management-alpine
+    restart: "no"
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    ports:
+      - 4369:4369
+      - 5671:5671
+      - 5672:5672     # AMQP
+      - 15671:15671   #
+      - 15672:15672   # http (management)
+      - 15691:15691   #
+      - 15692:15962   # http (prometheus)
+      - 25672:25672   # clustering
+    volumes:
+      - rabbitmq-volume
+
 
 volumes:
   redis-volume:
@@ -76,4 +96,6 @@ volumes:
   postgres-pgadmin4-volume:
     driver: local
   minio-volume:
+    driver: local
+  rabbitmq-volume:
     driver: local
