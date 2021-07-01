@@ -1,5 +1,6 @@
 version: "3.9"
 services:
+ 
 
   redis:
     container_name: redis
@@ -9,7 +10,8 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - redis-volume
+      - redis-data:/data
+ 
 
   redis-commander:
     container_name: redis-commander
@@ -18,14 +20,29 @@ services:
     depends_on:
       - redis
     environment:
-      - REDIS_HOSTS=local:redis:6379:0:password,local:redis:6379:1:password,local:redis:6379:2:password,local:redis:6379:3:password,local:redis:6379:4:password,local:redis:6379:5:password,local:redis:6379:6:password,local:redis:6379:7:password
+      - REDIS_HOSTS=local:redis:6379:0:password, \
+          local:redis:6379:1:password, \
+          local:redis:6379:2:password, \
+          local:redis:6379:3:password, \
+          local:redis:6379:4:password, \
+          local:redis:6379:5:password, \
+          local:redis:6379:6:password, \
+          local:redis:6379:7:password, \
+          local:redis:6379:8:password, \
+          local:redis:6379:9:password, \
+          local:redis:6379:10:password, \
+          local:redis:6379:11:password, \
+          local:redis:6379:12:password, \
+          local:redis:6379:13:password, \
+          local:redis:6379:14:password, \
+          local:redis:6379:15:password
       - HTTP_USER=user
       - HTTP_PASSWORD=password
     ports:
       - 16379:8081
-    volumes:
-      - redis-commander-volume
+ 
 
+  #https://docs.docker.com/samples/postgresql_service/
   postgres:
     container_name: postgres
     image: postgres:11.12
@@ -36,8 +53,9 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - postgres-volume
- 
+      - postgres-data:/var/lib/postgresql/data
+      - postgres-logs:/var/log/postgresql
+      
   postgres-pgadmin4:
     container_name: postgres-pgadmin4
     image:  dpage/pgadmin4:5.4
@@ -49,8 +67,13 @@ services:
       - postgres
     ports:
       - 15432:80
+      #- 15443:443
     volumes:
-      - postgres-pgadmin4-volume
+      - postgres-pgadmin4-data:/var/lib/pgadmin
+      #-v /path/to/certificate.cert:/certs/server.cert \
+      #-v /path/to/certificate.key:/certs/server.key \
+      #-v /tmp/servers.json:/pgadmin4/servers.json \
+ 
 
   minio:
     container_name: minio
@@ -64,8 +87,9 @@ services:
     ports:
       - 9000:9000
     volumes:
-      - minio-volume
-      
+      - minio-data:/data
+ 
+
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.8.17-management-alpine
@@ -73,6 +97,7 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=password
+      - RABBITMQ_NODENAME=node1
     ports:
       - 4369:4369
       - 5671:5671
@@ -83,7 +108,10 @@ services:
       - 15692:15962   # http (prometheus)
       - 25672:25672   # clustering
     volumes:
-      - rabbitmq-volume
+      - rabbitmq-conf:/etc/rabbitmq
+      - rabbitmq-data:/var/lib/rabbitmq
+      - rabbitmq-logs:/var/log/rabbitmq
+ 
 
   prometheus:
     container_name: prometheus
@@ -92,8 +120,9 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - prometheus-volume
-      
+      - prometheus-conf:/etc/prometheus
+      - prometheus-data:/prometheus
+     
   grafana:
     container_name: grafana
     image: grafana/grafana:8.0.3
@@ -101,25 +130,43 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=user
       - GF_SECURITY_ADMIN_PASSWORD=password
+      #- GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      #- GF_LOG_MODE=console file
     ports:
       - 3000:3000
     volumes:
-      - grafana-volume
+      - grafana-conf:/etc/grafana
+      - grafana-data:/var/lib/grafana
+      - grafana-logs:/var/log/grafana
+      - grafana-home:/usr/share/grafana
+ 
 
 volumes:
-  redis-volume:
+  redis-data:
     driver: local
-  redis-commander-volume:
+  postgres-data:
     driver: local
-  postgres-volume:
+  postgres-logs:
     driver: local
-  postgres-pgadmin4-volume:
+  postgres-pgadmin4-data:
     driver: local
-  minio-volume:
+  minio-data:
     driver: local
-  rabbitmq-volume:
+  rabbitmq-data:
     driver: local
-  prometheus-volume:
+  rabbitmq-logs:
     driver: local
-  grafana-volume:
+  rabbitmq-conf:
+    driver: local
+  prometheus-data:
+    driver: local
+  prometheus-conf:
+    driver: local
+  grafana-data:
+    driver: local
+  grafana-conf:
+    driver: local
+  grafana-logs:
+    driver: local
+  grafana-home:
     driver: local
